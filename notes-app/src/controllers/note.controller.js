@@ -43,15 +43,29 @@ exports.createNotesBulk = async (req, res) => {
       });
     }
 
-    // Optional: Add basic validation for each note in the array before calling insertMany
-    // However, Mongoose validation will catch issues anyway.
-    
     const createdNotes = await Note.insertMany(notes);
 
     res.status(201).json({
       success: true,
       message: `${createdNotes.length} notes created successfully`,
       data: createdNotes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
+exports.getAllNotes = async (req, res) => {
+  try {
+    const notes = await Note.find();
+    res.status(200).json({
+      success: true,
+      message: "Notes fetched successfully",
+      data: notes,
     });
   } catch (error) {
     res.status(500).json({
