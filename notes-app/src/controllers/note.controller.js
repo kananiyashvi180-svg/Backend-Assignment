@@ -30,3 +30,36 @@ exports.createNote = async (req, res) => {
     });
   }
 };
+
+exports.createNotesBulk = async (req, res) => {
+  try {
+    const { notes } = req.body;
+
+    if (!Array.isArray(notes) || notes.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "A non-empty array of notes is required",
+        data: null,
+      });
+    }
+
+    // Optional: Add basic validation for each note in the array before calling insertMany
+    // However, Mongoose validation will catch issues anyway.
+    
+    const createdNotes = await Note.insertMany(notes);
+
+    res.status(201).json({
+      success: true,
+      message: `${createdNotes.length} notes created successfully`,
+      data: createdNotes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
+
